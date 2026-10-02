@@ -46,7 +46,7 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ## Deploy
 
 The site lives at [theriault.dev](https://theriault.dev), served by
-[Who Touched My Server](https://github.com/devontheriault/theriault.dev), my C server, which also
+Who Touched My Server, my C server, which also
 watches it. The server serves this repo from its `SITE_ROOT` directory (default `site/` beside the
 server) and keeps its own dashboard at `/monitor/`. The server has this repo cloned as `site/`
 (it refuses to serve dotfiles, so `.git` and `.cache` stay private). To deploy, push to GitHub,
