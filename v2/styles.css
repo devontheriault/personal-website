@@ -180,7 +180,7 @@ code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size:
 
 /* Pin on screens big enough to hold the text and the chart at once. */
 @media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
-  .story { height: 260vh; }
+  .story { height: 200vh; }
   .story__pin {
     position: sticky;
     top: var(--nav-h);
