@@ -75,6 +75,11 @@ const anchorOf = (node) => { const b = node.getBoundingClientRect(); return { x:
 // ---------- chart shell ----------
 // impl: { build(svg, w, h), update(p), hover(x, y, client) , step(dir) }
 const charts = [];
+// The tip is pinned to the viewport, so a page scroll strands it away from its chart:
+// drop it (and the chart's highlight) as soon as the page moves.
+let hovered = null;
+const clearHover = () => { hovered?.hover(null); hovered = null; hideTip(); };
+addEventListener('scroll', () => { if (hovered || !tip.hidden) clearHover(); }, { passive: true });
 function mountChart(plot, impl, progress) {
   const svg = svgEl('svg', { 'aria-hidden': 'true', focusable: 'false' }, plot);
   const state = { p: reduceMotion ? 1 : 0, size: null };
@@ -94,16 +99,21 @@ function mountChart(plot, impl, progress) {
 
   const onPointer = (e) => {
     const r = plot.getBoundingClientRect();
+    hovered = impl;
     impl.hover(e.clientX - r.left, e.clientY - r.top, { x: e.clientX, y: e.clientY });
   };
   plot.addEventListener('pointermove', onPointer);
   plot.addEventListener('pointerdown', onPointer);
-  plot.addEventListener('pointerleave', () => { impl.hover(null); hideTip(); });
-  plot.addEventListener('blur', () => { impl.hover(null); hideTip(); });
+  // only take the tip down if it's this chart's (tapping chart B blurs chart A)
+  const release = () => { impl.hover(null); if (hovered === impl) clearHover(); };
+  plot.addEventListener('pointerleave', release);
+  // a touch that turns into a page scroll is cancelled rather than lifted
+  plot.addEventListener('pointercancel', release);
+  plot.addEventListener('blur', release);
   plot.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { impl.step(1); e.preventDefault(); }
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { impl.step(-1); e.preventDefault(); }
-    else if (e.key === 'Escape') { impl.hover(null); hideTip(); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { hovered = impl; impl.step(1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { hovered = impl; impl.step(-1); e.preventDefault(); }
+    else if (e.key === 'Escape') release();
   });
 
   const chart = {
