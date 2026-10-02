@@ -215,6 +215,8 @@ function orchestrateChart() {
 
       arcGroup = svgEl('g', { class: 'arcs' }, svg);
       marks = [];
+      // small, even beads sized to each merge's slot, so they stay quiet when the slots are narrow
+      const r = clamp(step * 0.28, 0.9, 2).toFixed(1);
       arcs = MERGES.map(([fork, merge, lines, , commits], i) => {
         const xe = x0 + (i + 0.5) * step;
         const xs = Math.min(x0 + forkIndex(fork) * step, xe - 3);
@@ -224,15 +226,14 @@ function orchestrateChart() {
           class: 'arc', pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1,
         }, arcGroup);
         // each commit sits on the arc where its time falls between fork and merge
-        for (const [t, added] of commits) {
+        for (const [t] of commits) {
           const f = clamp((t - fork) / Math.max(1, merge - fork));
           let lo = 0, hi = 1; // the curve's x runs 3u² - 2u³ of the way across
           for (let k = 0; k < 20; k++) { const u = (lo + hi) / 2; if (3 * u * u - 2 * u * u * u < f) lo = u; else hi = u; }
           const u = (lo + hi) / 2;
-          const r = 1.5 + Math.log10(Math.max(1, added)) * 0.75;
           marks.push({ i, u, el: svgEl('circle', {
             cx: (xs + (xe - xs) * (3 * u * u - 2 * u * u * u)).toFixed(1),
-            cy: (base + (c - base) * 3 * u * (1 - u)).toFixed(1), r: r.toFixed(1), class: 'commit',
+            cy: (base + (c - base) * 3 * u * (1 - u)).toFixed(1), r, class: 'commit',
           }, arcGroup) });
         }
         return arc;
