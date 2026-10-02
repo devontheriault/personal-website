@@ -117,22 +117,24 @@ function draw(scroll) {
   pts.forEach(([x, ya], i) => (i ? ctx.lineTo(x, ya) : ctx.moveTo(x, ya)));
   ctx.stroke();
 
-  // crosshair at the reader's position in the page
+  // crosshair at the reader's position in the page; hidden at the top, eased in over the first screen of scrolling
   const cx = W * (0.06 + 0.88 * progress);
   const cy = lineAAt(cx);
-  ctx.globalAlpha = (colors.dark ? 0.16 : 0.12) * fade;
+  const r = Math.min(1, Math.max(0, scroll / H));
+  const reveal = fade * r * r * (3 - 2 * r);
+  ctx.globalAlpha = (colors.dark ? 0.16 : 0.12) * reveal;
   ctx.strokeStyle = colors.ink;
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(Math.round(cx) + 0.5, 0);
   ctx.lineTo(Math.round(cx) + 0.5, H);
   ctx.stroke();
-  ctx.globalAlpha = 0.6 * fade;
+  ctx.globalAlpha = 0.6 * reveal;
   ctx.fillStyle = colors.bg;
   ctx.beginPath();
   ctx.arc(cx, cy, 6, 0, Math.PI * 2);
   ctx.fill();
-  ctx.globalAlpha = (colors.dark ? 0.7 : 0.55) * fade;
+  ctx.globalAlpha = (colors.dark ? 0.7 : 0.55) * reveal;
   ctx.fillStyle = colors.accent;
   ctx.beginPath();
   ctx.arc(cx, cy, 4, 0, Math.PI * 2);
