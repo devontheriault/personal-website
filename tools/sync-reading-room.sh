@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Copy the Reading Room's Journal from the Books project into /reading-room/, point its way
-# out back to this site, and refresh the bookshelf chart's data in v2/data.js.
+# out back to this site, and refresh the bookshelf chart's data in data.js.
 # The Books project stays the source of truth: add books there, then rerun this.
 #   tools/sync-reading-room.sh [path-to-Books]   (default: ~/Projects/Books)
 set -euo pipefail
@@ -8,8 +8,6 @@ set -euo pipefail
 src="${1:-$HOME/Projects/Books}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 dest="$root/reading-room"
-# Where the home page lives, relative to the site root. Set to "" once v2 becomes the main page.
-site_home="v2/"
 
 [[ -f "$src/index.html" && -f "$src/js/books.js" ]] || { echo "No Reading Room build at $src" >&2; exit 1; }
 
@@ -38,7 +36,7 @@ HTML
 
 # In the copy only (the Books project stays standalone): every way out of the Journal that
 # led to the bookshelf leads back to this site instead.
-home="../../$site_home"
+home="../../"
 journal="$dest/journey/index.html"
 swap() { # <file> <perl substitution> <what, for the error>
   perl -0pi -e "$2" "$1"
@@ -50,6 +48,6 @@ grep -q 'href="\.\./"' "$journal" && { echo "A link to the bookshelf is still in
 swap "$dest/journey/js/main.js" 's{location\.assign\("\.\./"\)}{location.assign("'"$home"'")}' 'the no-WebGL redirect'
 
 # The bookshelf chart on the home page reads the same books.
-node "$root/tools/update-books-data.mjs" "$src/js/books.js" "$root/v2/data.js"
+node "$root/tools/update-books-data.mjs" "$src/js/books.js" "$root/data.js"
 
 echo "Synced $(grep -c 'dateRead:' "$dest/js/books.js") books from $src"
