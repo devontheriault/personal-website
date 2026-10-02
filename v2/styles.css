@@ -286,7 +286,13 @@ code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size:
 .about { padding-bottom: clamp(4rem, 9vw, 7rem); }
 .about__grid { display: grid; gap: 2.5rem 4rem; align-items: start; }
 @media (min-width: 900px) { .about__grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); } }
-.about__text { font-size: clamp(1.075rem, 1.4vw, 1.175rem); color: var(--ink-2); max-width: 40rem; }
+/* near-ink plus a bg-coloured halo so the backdrop's dots and lines don't wash the copy out */
+.about__text {
+  font-size: clamp(1.075rem, 1.4vw, 1.175rem);
+  color: color-mix(in srgb, var(--ink) 75%, var(--ink-2));
+  max-width: 40rem;
+  text-shadow: 0 0 2px var(--bg), 0 0 8px var(--bg), 0 0 16px var(--bg);
+}
 .about__text cite { font-style: italic; color: var(--ink); }
 
 /* a small 2×2 grid, beside the text on desktop and under it on phones */
