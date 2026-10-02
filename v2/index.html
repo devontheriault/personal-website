@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devon Theriault: Data analyst who builds things</title>
+  <meta name="description" content="Devon Theriault: senior data analyst in Halifax, Nova Scotia, and builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
+  <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Devon Theriault">
+  <meta property="og:description" content="Senior data analyst in Halifax, NS. Builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="data.js">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="background.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav__inner">
+      <a class="nav__name" href="#top">Devon Theriault</a>
+      <nav aria-label="Primary">
+        <ul class="nav__links">
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a class="nav__resume" href="../assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Resume <span aria-hidden="true">↗</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero wrap" id="top">
+      <p class="eyebrow">Senior Data Analyst · Halifax, Nova Scotia</p>
+      <h1 class="hero__title">I make data useful, and build software on the side.</h1>
+      <p class="hero__lede">
+        I'm Devon. For six years I've built reporting that people actually use, mostly in SQL,
+        Snowflake, dbt, Python and Tableau. Outside work I build my own tools. Each project
+        below comes with its real data, which grows as you scroll.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--solid" href="#projects">See my projects</a>
+        <a class="btn" href="../assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Read my resume <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" aria-labelledby="projects-title">
+      <div class="wrap section-head">
+        <p class="label">Projects</p>
+        <h2 id="projects-title">Four things I've built. Keep scrolling to see the data behind each one.</h2>
+      </div>
+
+      <!-- 01 Orchestrate -->
+      <article class="story" data-story="orch" aria-labelledby="orch-title">
+        <div class="story__pin">
+          <div class="wrap story__text">
+            <div>
+              <h3 id="orch-title">Orchestrate</h3>
+              <p class="project__kind">Open-source desktop app · Rust, Tauri, Svelte, TypeScript</p>
+              <p class="project__desc">
+                A desktop app for running Claude Code agents in parallel. Each agent works in its own Git
+                worktree, with live output, stop and resume, diff review and one-click merge. It was mostly
+                built by its own agents, and v0.1.0 is out for Linux, macOS and Windows.
+              </p>
+              <div class="project__links">
+                <a href="https://orchestrates.dev" target="_blank" rel="noopener">orchestrates.dev <span aria-hidden="true">↗</span></a>
+                <a href="https://github.com/devontheriault/Orchestrate" target="_blank" rel="noopener">Source <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="readout" aria-hidden="true">
+              <span class="readout__big" data-readout="orch-count">0</span>
+              <span class="readout__label" data-readout="orch-label">agent merges into main</span>
+            </div>
+          </div>
+          <figure class="viz">
+            <div class="viz__plot" data-chart="orch" tabindex="0" role="img"
+                 aria-label="Arc chart of 187 agent-branch merges into Orchestrate's main branch between September 20 and October 2, 2026. Arc height shows lines added, on a log scale. Most merges happened on September 23."></div>
+            <figcaption class="wrap viz__caption">
+              Each arc is one agent branch merge, drawn from when the branch left <code>main</code> to when it merged back.
+              Merges are spaced evenly in order. Arc height shows lines added, on a log scale.
+              Source: Orchestrate's git history.
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- 02 Tracking Canada's Agreements -->
+      <article class="story" data-story="vg" aria-labelledby="vg-title">
+        <div class="story__pin">
+          <div class="wrap story__text">
+            <div>
+              <h3 id="vg-title">Tracking Canada's Agreements</h3>
+              <p class="project__kind">Freelance web development · Next.js, interactive mapping</p>
+              <p class="project__desc">
+                An interactive map of the international agreements Canada has signed or announced since
+                March 2025, made in partnership with the Canadian Shield Institute, Gloves Off and Social
+                Capital Partners. I worked directly with the client from first requirements to launch.
+              </p>
+              <div class="project__links">
+                <a href="https://variablegeometry.ca" target="_blank" rel="noopener">variablegeometry.ca <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="readout" aria-hidden="true">
+              <span class="readout__big" data-readout="vg-count">0</span>
+              <span class="readout__label" data-readout="vg-label">agreements tracked</span>
+            </div>
+          </div>
+          <figure class="viz">
+            <div class="viz__legend wrap" data-legend="vg"></div>
+            <div class="viz__plot" data-chart="vg" tabindex="0" role="img"
+                 aria-label="Dot chart of 97 Canadian international agreements by month, March 2025 to September 2026, coloured by deal type. Security agreements are the largest group, at 39."></div>
+            <figcaption class="wrap viz__caption">
+              Each dot is one agreement, stacked by the month it was signed or announced and coloured by deal type.
+              Source: variablegeometry.ca.
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- 03 Who Touched My Server -->
+      <article class="story" data-story="td" aria-labelledby="td-title">
+        <div class="story__pin">
+          <div class="wrap story__text">
+            <div>
+              <h3 id="td-title">Who Touched My Server</h3>
+              <p class="project__kind">Personal project · C, SQLite, vanilla JavaScript</p>
+              <p class="project__desc">
+                A real-time visitor analytics dashboard I built from scratch: a custom HTTP server written in C,
+                with SQLite storage and a vanilla JavaScript frontend. No frameworks and no managed
+                infrastructure. The map below is its own data, fetched live.
+              </p>
+              <div class="project__links">
+                <a href="https://theriault.dev" target="_blank" rel="noopener">theriault.dev <span aria-hidden="true">↗</span></a>
+                <a href="https://github.com/devontheriault/theriault.dev" target="_blank" rel="noopener">Source <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <dl class="mini-kpis">
+              <div><dt>Visits</dt><dd data-stat="total_visits">–</dd></div>
+              <div><dt>Unique visitors</dt><dd data-stat="unique_visitors">–</dd></div>
+              <div><dt>Countries</dt><dd data-stat="unique_countries">–</dd></div>
+            </dl>
+          </div>
+          <figure class="viz">
+            <div class="viz__plot" data-chart="td" tabindex="0" role="img"
+                 aria-label="World map of the cities that have visited theriault.dev, each connected back to Halifax. Circle size shows visits."></div>
+            <figcaption class="wrap viz__caption">
+              Every city that has visited theriault.dev, connected back to Halifax. Circle area shows visits.
+              <span data-td-source>Source: theriault.dev, snapshot from October 2, 2026.</span>
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- 04 Reading Room -->
+      <article class="story" data-story="books" aria-labelledby="books-title">
+        <div class="story__pin">
+          <div class="wrap story__text">
+            <div>
+              <h3 id="books-title">Reading Room</h3>
+              <p class="project__kind">Personal project · Vanilla JavaScript, CSS 3D, Three.js</p>
+              <p class="project__desc">
+                A home for every book I read. The first edition is a three-dimensional bookshelf you can pull
+                books from to read my notes. The second, The Journal, is a cloth-bound journal drawn in WebGL
+                that opens as you scroll and pages through the year.
+              </p>
+              <div class="project__links">
+                <a href="../reading-room/journey/">Open the Journal</a>
+              </div>
+            </div>
+            <div class="readout" aria-hidden="true">
+              <span class="readout__big" data-readout="books-count">0</span>
+              <span class="readout__label" data-readout="books-label">books read in 2026</span>
+            </div>
+          </div>
+          <figure class="viz">
+            <div class="viz__plot" data-chart="books" tabindex="0" role="img"
+                 aria-label="Bookshelf chart of the 25 books I have read in 2026, 10,133 pages in all. Spine width shows pages and spine height shows my rating out of five."></div>
+            <figcaption class="wrap viz__caption">
+              Each spine is one book I read this year, in the order I finished them. Width shows pages and height
+              shows my rating out of five. The colours are the covers, and a dot marks a favourite.
+              Source: my Reading Room.
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+    </section>
+
+    <!-- About -->
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="wrap section-head">
+        <p class="label">About</p>
+        <h2 id="about-title">Hi, I'm Devon.</h2>
+      </div>
+
+      <div class="wrap about__grid">
+        <div class="about__text">
+          <p>
+            I'm a data analyst in Halifax, Nova Scotia. I studied Data Analytics at NSCC, and I've spent
+            the six years since building reporting that people actually use: Tableau dashboards at Kinduct,
+            supply chain KPIs at Irving Shipbuilding, and now Snowflake, dbt and a lot of SQL at Dentalcorp.
+            Outside work, I build things, including everything in the projects above.
+          </p>
+          <p>
+            When I'm away from a screen, I'm usually doing CrossFit, training for Hyrox or out for a run, or
+            spending time with my partner, Lauren, and my dog, Gus. I love to travel, too. My last big trip
+            took me through Italy, England and Madeira.
+          </p>
+          <p>
+            And I read a lot. So far this year that's <span data-books="count">25</span> books and <span data-books="pages">10,133</span> pages, eight of them from
+            the Dungeon Crawler Carl series. My favourites so far are <cite>In Cold Blood</cite>,
+            <cite>The Colour of Magic</cite> and Édouard Levé's <cite>Suicide</cite>, and, fittingly,
+            Murakami's running memoir.
+          </p>
+        </div>
+
+        <div class="photos">
+          <figure>
+            <button class="photo" type="button" data-full="../assets/about/full/gus.webp" aria-label="View larger photo: Gus">
+              <img src="../assets/about/gus.webp" width="480" height="480" loading="lazy" alt="Gus, a black dog in a red collar, sitting in a sunny field">
+            </button>
+            <figcaption>Gus</figcaption>
+          </figure>
+          <figure>
+            <button class="photo" type="button" data-full="../assets/about/full/race.webp" aria-label="View larger photo: Race day">
+              <img src="../assets/about/race.webp" width="480" height="480" loading="lazy" alt="Two friends grinning after a race, wearing race bibs">
+            </button>
+            <figcaption>Race day</figcaption>
+          </figure>
+          <figure>
+            <button class="photo" type="button" data-full="../assets/about/full/madeira.webp" aria-label="View larger photo: Madeira">
+              <img src="../assets/about/madeira.webp" width="480" height="480" loading="lazy" alt="Walking toward a sunset over the ocean on the coast of Madeira">
+            </button>
+            <figcaption>Madeira</figcaption>
+          </figure>
+          <figure>
+            <button class="photo" type="button" data-full="../assets/about/full/wedding.webp" aria-label="View larger photo: With Lauren">
+              <img src="../assets/about/wedding.webp" width="480" height="480" loading="lazy" alt="Devon and Lauren laughing together at a wedding, in black and white">
+            </button>
+            <figcaption>With Lauren</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <figure class="viz viz--career">
+        <div class="viz__plot" data-chart="career" tabindex="0" role="img"
+             aria-label="Career timeline from 2016 to 2026: Data Analytics at Nova Scotia Community College 2016 to 2019, Tableau developer at Kinduct Technologies 2019 to 2022, Supply Chain Performance Analyst at Irving Shipbuilding 2022 to 2023, and Data Analyst then Senior Data Analyst at Dentalcorp from 2023 to now."></div>
+      </figure>
+    </section>
+
+    <!-- Resume / contact -->
+    <section class="cta" id="contact" aria-labelledby="cta-title">
+      <div class="wrap cta__inner">
+        <div>
+          <h2 id="cta-title">Want the full picture?</h2>
+          <p class="cta__sub">My resume covers the rest. To talk about a role or a project, email me.</p>
+        </div>
+        <div class="cta__actions">
+          <a class="btn btn--solid btn--lg" href="../assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Download resume <span aria-hidden="true">↓</span></a>
+          <a class="btn btn--lg" href="mailto:dev.theriault@gmail.com">dev.theriault@gmail.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <span>© 2026 Devon Theriault</span>
+      <ul>
+        <li><a href="https://github.com/devontheriault" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="mailto:dev.theriault@gmail.com">Email</a></li>
+        <li><a href="../assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Resume</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="tip" role="tooltip" hidden></div>
+
+  <dialog class="lightbox" aria-label="Photo preview">
+    <button class="lightbox__close" type="button" aria-label="Close preview">×</button>
+    <figure class="lightbox__figure">
+      <img class="lightbox__img" alt="">
+      <figcaption class="lightbox__bar">
+        <button class="lightbox__nav" type="button" data-step="-1" aria-label="Previous photo">‹</button>
+        <span class="lightbox__caption"></span>
+        <button class="lightbox__nav" type="button" data-step="1" aria-label="Next photo">›</button>
+      </figcaption>
+    </figure>
+  </dialog>
+</body>
+</html>

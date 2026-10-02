@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>My Reading Journey</title>
+    <meta name="description" content="A year of reading, kept as a journal you open and page through." />
+    <meta name="theme-color" content="#1a1310" />
+    <link rel="icon" href="data:," />
+    <!-- the faces the binding is stamped in (the page itself sets its few
+         words in DM Mono); the studio's worker loads them all for itself -->
+    <link rel="preload" href="../assets/fonts/dm-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../assets/fonts/cormorant-garamond-400-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../assets/fonts/cormorant-garamond-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/journey.css" />
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.min.js" } }
+    </script>
+    <!-- modulepreload: made by tools/build.mjs -->
+    <link rel="modulepreload" href="vendor/three.min.js" />
+    <link rel="modulepreload" href="js/early.js" />
+    <link rel="modulepreload" href="js/art/studio.js" />
+    <link rel="modulepreload" href="js/data/journal-data.js" />
+    <link rel="modulepreload" href="js/art/layout.js" />
+    <link rel="modulepreload" href="js/util.js" />
+    <link rel="modulepreload" href="js/scene/dimensions.js" />
+    <link rel="modulepreload" href="js/main.js" />
+    <link rel="modulepreload" href="js/app/chrome.js" />
+    <link rel="modulepreload" href="js/app/director.js" />
+    <link rel="modulepreload" href="js/data/movements.js" />
+    <link rel="modulepreload" href="js/data/timeline.js" />
+    <link rel="modulepreload" href="js/app/mirror.js" />
+    <link rel="modulepreload" href="js/app/pointer.js" />
+    <link rel="modulepreload" href="js/app/turning.js" />
+    <link rel="modulepreload" href="js/app/scroller.js" />
+    <link rel="modulepreload" href="js/scene/journal-scene.js" />
+    <link rel="modulepreload" href="vendor/RoomEnvironment.js" />
+    <link rel="modulepreload" href="js/scene/binding.js" />
+    <link rel="modulepreload" href="js/scene/textures.js" />
+    <link rel="modulepreload" href="js/scene/page-textures.js" />
+    <link rel="modulepreload" href="js/scene/ribbon.js" />
+    <link rel="modulepreload" href="js/scene/leaf.js" />
+    <link rel="modulepreload" href="js/scene/stack.js" />
+    <!-- /modulepreload -->
+  </head>
+  <body>
+    <a class="edition" id="edition" href="../../v2/">Devon Theriault</a>
+
+    <!-- the same corner, once the Journal lies open -->
+    <button class="shut is-away" id="shut" type="button" aria-label="Close the Journal" tabindex="-1">
+      <span class="shut__mark" aria-hidden="true"></span>
+      <span class="shut__label" aria-hidden="true">Close</span>
+    </button>
+
+    <canvas class="stage" id="stage" aria-hidden="true"></canvas>
+
+    <!-- tall and empty: its height is the Journal's timeline, its stops the snap points -->
+    <div class="scroll" id="scroll" aria-hidden="true"></div>
+
+    <p class="hint" id="hint" aria-hidden="true">
+      <span class="hint__label">Scroll to open</span>
+      <span class="hint__rule"></span>
+    </p>
+
+    <p class="focus-caption" id="focus-caption" aria-hidden="true"></p>
+
+    <!-- the Journal as text, for screen readers and keyboards (js/mirror.js) -->
+    <main class="visually-hidden" id="journal-text"></main>
+
+    <div class="fallback" id="fallback" hidden>
+      <p class="fallback__title">My Reading Journey</p>
+      <p>This edition of the archive needs a browser with WebGL.</p>
+      <p><a href="../../v2/">Taking you back to my site →</a></p>
+    </div>
+
+    <noscript>
+      <div class="fallback">
+        <p class="fallback__title">My Reading Journey</p>
+        <p>This edition of the archive needs JavaScript. <a href="../../v2/">Back to my site</a>.</p>
+      </div>
+    </noscript>
+
+    <!-- the bookshelf's own book data: one source for both editions -->
+    <script src="../js/books.js"></script>
+    <script src="../js/reading-stats.js"></script>
+    <!-- first, so the pages start being drawn while Three.js downloads -->
+    <script type="module" src="js/early.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

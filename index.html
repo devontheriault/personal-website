@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devon Theriault: Data analyst who builds things</title>
+  <meta name="description" content="Devon Theriault: senior data analyst in Halifax, Nova Scotia, and builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
+  <meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#11100d" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Devon Theriault">
+  <meta property="og:description" content="Senior data analyst in Halifax, NS. Builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav__inner">
+      <a class="nav__name" href="#top">Devon Theriault</a>
+      <nav aria-label="Primary">
+        <ul class="nav__links">
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a class="nav__resume" href="assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Resume <span aria-hidden="true">↗</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero wrap" id="top">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Halifax, Nova Scotia</p>
+      <h1 class="hero__title">
+        I make data useful,<br>
+        <em>and build software</em><br>
+        on the side.
+      </h1>
+      <div class="hero__body">
+        <p class="hero__lede">
+          I'm Devon, a senior data analyst at Dentalcorp. For six years I've built reporting
+          that people actually use. Outside work I build my own tools, from a C web server to
+          a desktop app for running AI coding agents in parallel.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--solid" href="#projects">See my projects</a>
+          <a class="btn" href="assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Read my resume <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="projects" id="projects" aria-labelledby="projects-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="label">01 / Projects</p>
+          <h2 id="projects-title">Things I've built, and what I'm building now.</h2>
+        </div>
+
+        <article class="project">
+          <a class="shot" href="https://orchestrates.dev" target="_blank" rel="noopener" aria-label="Visit orchestrates.dev">
+            <span class="shot__bar" aria-hidden="true"><i></i><i></i><i></i><span class="shot__url">orchestrates.dev</span></span>
+            <img src="assets/projects/orchestrates.dev.webp" width="1200" height="750" loading="lazy"
+                 alt="The Orchestrate landing page: 'All your Claude Code agents, in one window.'">
+          </a>
+          <div class="project__info">
+            <div class="project__meta">
+              <span class="project__num">01</span>
+              <span class="status status--active">In active development</span>
+            </div>
+            <h3>Orchestrate</h3>
+            <p class="project__kind">Open-source desktop app</p>
+            <p>
+              Orchestrate is a desktop app for running Claude Code agents in parallel. Each agent works
+              in its own Git worktree, and the app shows live output, lets you stop and resume
+              agents, review their diffs and merge their work.
+            </p>
+            <ul class="project__points">
+              <li>A background host keeps agents running after the window closes. Other machines, or an iPhone, can control them over Tailscale.</li>
+              <li>Mostly built by its own agents: 180+ agent branches merged in under two weeks.</li>
+              <li>v0.1.0 is out for Linux, macOS and Windows.</li>
+            </ul>
+            <ul class="tags" aria-label="Built with">
+              <li>Rust</li><li>Tauri</li><li>Svelte</li><li>TypeScript</li>
+            </ul>
+            <div class="project__links">
+              <a href="https://orchestrates.dev" target="_blank" rel="noopener">orchestrates.dev <span aria-hidden="true">↗</span></a>
+              <a href="https://github.com/devontheriault/Orchestrate" target="_blank" rel="noopener">Source <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <a class="shot" href="https://variablegeometry.ca" target="_blank" rel="noopener" aria-label="Visit variablegeometry.ca">
+            <span class="shot__bar" aria-hidden="true"><i></i><i></i><i></i><span class="shot__url">variablegeometry.ca</span></span>
+            <img src="assets/projects/variablegeometry.ca.webp" width="1200" height="750" loading="lazy"
+                 alt="Tracking Canada's Agreements: a world map with clustered markers showing agreements by country">
+          </a>
+          <div class="project__info">
+            <div class="project__meta">
+              <span class="project__num">02</span>
+              <span class="status">Launched · Client work</span>
+            </div>
+            <h3>Tracking Canada's Agreements</h3>
+            <p class="project__kind">Freelance web development</p>
+            <p>
+              An interactive world map of the international agreements Canada has signed since March 2025,
+              covering trade, security, resources, technology and strategic partnerships. It's built in
+              partnership with the Canadian Shield Institute, Gloves Off and Social Capital Partners.
+            </p>
+            <ul class="project__points">
+              <li>Worked directly with the client from first requirements through to the production launch.</li>
+              <li>Data-driven visualizations: filter by deal type, search by country and scrub through time.</li>
+            </ul>
+            <ul class="tags" aria-label="Built with">
+              <li>Next.js</li><li>Data visualization</li><li>Mapping</li>
+            </ul>
+            <div class="project__links">
+              <a href="https://variablegeometry.ca" target="_blank" rel="noopener">variablegeometry.ca <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <a class="shot" href="https://theriault.dev" target="_blank" rel="noopener" aria-label="Visit theriault.dev">
+            <span class="shot__bar" aria-hidden="true"><i></i><i></i><i></i><span class="shot__url">theriault.dev</span></span>
+            <img src="assets/projects/theriault.dev.webp" width="1200" height="750" loading="lazy"
+                 alt="Who Touched My Server: a live analytics dashboard with visitor details and a 3D globe">
+          </a>
+          <div class="project__info">
+            <div class="project__meta">
+              <span class="project__num">03</span>
+              <span class="status status--live">Live</span>
+            </div>
+            <h3>Who Touched My Server</h3>
+            <p class="project__kind">Personal project</p>
+            <p>
+              A real-time visitor analytics dashboard I built from scratch. I wanted to see who visits
+              my server, so I wrote the whole stack myself: no frameworks and no managed infrastructure.
+            </p>
+            <ul class="project__points">
+              <li>A custom HTTP server written in C, with SQLite for storage and a vanilla JavaScript frontend.</li>
+              <li>Live visitor feed, a 3D globe of traffic, and breakdowns by country, browser, device and referrer.</li>
+              <li>Live now and serving real traffic.</li>
+            </ul>
+            <ul class="tags" aria-label="Built with">
+              <li>C</li><li>SQLite</li><li>JavaScript</li>
+            </ul>
+            <div class="project__links">
+              <a href="https://theriault.dev" target="_blank" rel="noopener">theriault.dev <span aria-hidden="true">↗</span></a>
+              <a href="https://github.com/devontheriault/theriault.dev" target="_blank" rel="noopener">Source <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="about wrap" id="about" aria-labelledby="about-title">
+      <div class="section-head">
+        <p class="label">02 / About</p>
+        <h2 id="about-title">Six years of data work, and a habit of building my own tools.</h2>
+      </div>
+
+      <div class="about__grid">
+        <div class="about__text">
+          <p>
+            Most of my day job is in SQL, Snowflake, dbt, Python and Tableau. At Dentalcorp I led the
+            migration of 70+ dashboards to Snowflake. I also built an automated reporting system that
+            sends 700+ executive reports a month, and I worked with leadership to rebuild how core
+            business metrics are calculated.
+          </p>
+          <p>
+            Before that I was at Irving Shipbuilding, where a Python workflow I wrote saved $100K+ a
+            year in contracted labour. Before that I spent close to three years as a Tableau developer
+            at Kinduct Technologies.
+          </p>
+          <p>
+            I use Claude Code every day. That's what led me to build Orchestrate, and it's changed how
+            quickly I can ship side projects in languages I don't use at work, like Rust and C.
+          </p>
+        </div>
+
+        <ol class="timeline" aria-label="Experience">
+          <li>
+            <span class="timeline__when">2025 – Now</span>
+            <span class="timeline__role">Senior Data Analyst</span>
+            <span class="timeline__org">Dentalcorp</span>
+          </li>
+          <li>
+            <span class="timeline__when">2023 – 2025</span>
+            <span class="timeline__role">Data Analyst</span>
+            <span class="timeline__org">Dentalcorp</span>
+          </li>
+          <li>
+            <span class="timeline__when">2022 – 2023</span>
+            <span class="timeline__role">Supply Chain Performance Analyst</span>
+            <span class="timeline__org">Irving Shipbuilding</span>
+          </li>
+          <li>
+            <span class="timeline__when">2019 – 2022</span>
+            <span class="timeline__role">Tableau Developer</span>
+            <span class="timeline__org">Kinduct Technologies</span>
+          </li>
+          <li>
+            <span class="timeline__when">2016 – 2019</span>
+            <span class="timeline__role">Data Analytics</span>
+            <span class="timeline__org">Nova Scotia Community College</span>
+          </li>
+        </ol>
+      </div>
+
+      <dl class="skills">
+        <div><dt>Data &amp; modeling</dt><dd>SQL, Snowflake, dbt, data modeling, query optimization</dd></div>
+        <div><dt>Visualization</dt><dd>Tableau, row-level security, report automation</dd></div>
+        <div><dt>Programming</dt><dd>Python, Rust, TypeScript, Svelte, Tauri, C, JavaScript</dd></div>
+        <div><dt>Tools</dt><dd>Git, GitHub Actions, REST APIs, Jupyter, Claude Code</dd></div>
+      </dl>
+    </section>
+
+    <!-- Resume / contact -->
+    <section class="cta" id="contact" aria-labelledby="cta-title">
+      <div class="wrap cta__inner">
+        <div>
+          <p class="label">03 / Get in touch</p>
+          <h2 id="cta-title">Want the full picture?</h2>
+          <p class="cta__sub">My resume covers the rest. To talk about a role or a project, email me.</p>
+        </div>
+        <div class="cta__actions">
+          <a class="btn btn--solid btn--lg" href="assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Download resume <span aria-hidden="true">↓</span></a>
+          <a class="btn btn--lg" href="mailto:dev.theriault@gmail.com">dev.theriault@gmail.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <span>© 2026 Devon Theriault</span>
+      <ul>
+        <li><a href="https://github.com/devontheriault" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="mailto:dev.theriault@gmail.com">Email</a></li>
+        <li><a href="assets/Devon_Theriault_Resume.pdf" target="_blank" rel="noopener">Resume</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

@@ -24,3 +24,6 @@ Thumbs.db
 .idea/
 *.swp
 *.log
+
+# …except the Reading Room Journal's saved copy of Three.js, which the page loads as is
+!reading-room/journey/vendor/
