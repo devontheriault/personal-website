@@ -42,8 +42,20 @@ python3 -m http.server 8000   # then open http://localhost:8000
 
 ## Deploy
 
-Any static host works, e.g. Cloudflare Pages, Netlify, GitHub Pages, or
-your own server. Serve the repo root as is.
+The site lives at [theriault.dev](https://theriault.dev), served by
+[Who Touched My Server](https://github.com/devontheriault/theriault.dev), my C server, which also
+watches it. The server serves this repo from its `SITE_ROOT` directory (default `site/` beside the
+server) and keeps its own dashboard at `/monitor/`. To deploy, copy the repo there, leaving out
+`.git` (the server refuses dotfiles anyway):
+
+```sh
+rsync -a --delete --exclude .git ./ <server>:<theriault.dev checkout>/site/
+```
+
+Files are revalidated on every request, so changes show up without a restart.
+
+Every page loads `/monitor/js/track.js`, which reports the visit. When you run the site locally
+with `python3 -m http.server`, that script doesn't exist and the request fails harmlessly.
 
 ## Reading Room (`/reading-room/`)
 
@@ -60,6 +72,7 @@ The script:
 - copies the Journal and the book data and fonts it shares with the bookshelf
 - repoints the Journal's links to the bookshelf (the corner link, the no-WebGL redirect and the
   fallback messages) to this site's home page, in the copy only
+- adds the visit tracker (`/monitor/js/track.js`) to the Journal, also in the copy only
 - refreshes the bookshelf chart (`BOOKS` in `data.js`)
 
 If the Journal changes so that a link can't be repointed, the script stops with an error.

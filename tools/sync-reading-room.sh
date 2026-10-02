@@ -47,6 +47,11 @@ perl -0pi -e 's{<a href="\.\./">Taking you to the bookshelf instead →</a>}{<a 
 grep -q 'href="\.\./"' "$journal" && { echo "A link to the bookshelf is still in $journal" >&2; exit 1; }
 swap "$dest/journey/js/main.js" 's{location\.assign\("\.\./"\)}{location.assign("'"$home"'")}' 'the no-WebGL redirect'
 
+# Who Touched My Server counts the Journal's visits, as it does the home page's.
+tracker='<script src="/monitor/js/track.js" defer></script>'
+perl -0pi -e 's{^(\s*)(<script type="module" src="js/main\.js"></script>\n)}{$1$2$1'"$tracker"'\n}m' "$journal"
+grep -qF "$tracker" "$journal" || { echo "Couldn't add the visit tracker to $journal; has the Journal changed?" >&2; exit 1; }
+
 # The bookshelf chart on the home page reads the same books.
 node "$root/tools/update-books-data.mjs" "$src/js/books.js" "$root/data.js"
 
