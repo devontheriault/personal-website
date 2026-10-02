@@ -118,7 +118,6 @@ code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size:
   background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--grid);
 }
 .nav__inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
 .nav__name { font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
