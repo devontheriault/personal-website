@@ -45,11 +45,12 @@ python3 -m http.server 8000   # then open http://localhost:8000
 The site lives at [theriault.dev](https://theriault.dev), served by
 [Who Touched My Server](https://github.com/devontheriault/theriault.dev), my C server, which also
 watches it. The server serves this repo from its `SITE_ROOT` directory (default `site/` beside the
-server) and keeps its own dashboard at `/monitor/`. To deploy, copy the repo there, leaving out
-`.git` (the server refuses dotfiles anyway):
+server) and keeps its own dashboard at `/monitor/`. The server has this repo cloned as `site/`
+(it refuses to serve dotfiles, so `.git` stays private). To deploy, push to GitHub, then on the
+server:
 
 ```sh
-rsync -a --delete --exclude .git ./ <server>:<theriault.dev checkout>/site/
+cd <theriault.dev checkout>/site && git pull
 ```
 
 Files are revalidated on every request, so changes show up without a restart.
