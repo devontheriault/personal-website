@@ -1,4 +1,4 @@
-// Rewrite the BOOKS export in v2/data.js from the Reading Room's books.js.
+// Rewrite the BOOKS export in data.js from the Reading Room's books.js.
 //   node tools/update-books-data.mjs <books.js> <data.js>
 import fs from 'node:fs';
 import vm from 'node:vm';

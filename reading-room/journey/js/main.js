@@ -34,7 +34,7 @@ const DRIFT_FRAME = 26; // ms; the frame after it lands about 33ms on
 function fallback() {
   document.body.classList.add("no-webgl");
   $("fallback").hidden = false;
-  setTimeout(() => location.assign("../../v2/"), 6000);
+  setTimeout(() => location.assign("../../"), 6000);
 }
 
 async function boot() {
