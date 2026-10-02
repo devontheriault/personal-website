@@ -127,23 +127,23 @@ function storyProgress(story) {
   return () => {
     const vh = innerHeight;
     if (getComputedStyle(pin).position === 'sticky') {
-      // Start as the section rises into view and finish halfway through the pinned stretch,
-      // so the finished chart and its total hold on screen for a while before moving on.
+      // Start as the section rises into view and finish a little past halfway through the pinned
+      // stretch, so the finished chart and its total hold on screen before moving on.
       const r = story.getBoundingClientRect();
       const pinned = r.height - (vh - NAV_H);
-      const start = vh * 0.75;
-      return clamp((start - r.top) / (start - NAV_H + pinned * 0.5));
+      const start = vh * 0.7;
+      return clamp((start - r.top) / (start - NAV_H + pinned * 0.575));
     }
     return plotProgress(plot)();
   };
 }
 function plotProgress(plot) {
   return () => {
-    // Grow while the chart scrolls into view and finish once it's fully on screen, while the
-    // number above it is still visible.
+    // Grow as the chart scrolls up the screen and finish a little after it's fully in view,
+    // while the number above it is still visible.
     const r = plot.getBoundingClientRect();
     const vh = innerHeight;
-    const start = vh * 0.95, end = Math.max(NAV_H, vh * 0.9 - r.height);
+    const start = vh * 0.9425, end = Math.max(NAV_H, vh * 0.8175 - r.height * 0.95);
     return clamp((start - r.top) / (start - end));
   };
 }
