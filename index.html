@@ -10,12 +10,15 @@
   <meta property="og:title" content="Devon Theriault">
   <meta property="og:description" content="Senior data analyst in Halifax, NS. Builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://theriault.dev/">
+  <link rel="canonical" href="https://theriault.dev/">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="modulepreload" href="data.js">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="background.js"></script>
   <script type="module" src="main.js"></script>
+  <script src="/monitor/js/track.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -132,10 +135,10 @@
               <p class="project__desc">
                 A real-time visitor analytics dashboard I built from scratch: a custom HTTP server written in C,
                 with SQLite storage and a vanilla JavaScript frontend. No frameworks and no managed
-                infrastructure. The map below is its own data, fetched live.
+                infrastructure. It now watches this site, and the map below is its own data, fetched live.
               </p>
               <div class="project__links">
-                <a href="https://theriault.dev" target="_blank" rel="noopener">theriault.dev <span aria-hidden="true">↗</span></a>
+                <a href="/monitor/" target="_blank" rel="noopener">theriault.dev/monitor <span aria-hidden="true">↗</span></a>
                 <a href="https://github.com/devontheriault/theriault.dev" target="_blank" rel="noopener">Source <span aria-hidden="true">↗</span></a>
               </div>
             </div>
