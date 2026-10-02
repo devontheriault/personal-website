@@ -39,6 +39,9 @@ python3 -m http.server 8000   # then open http://localhost:8000
   endpoints, which allow cross-origin requests.
 - `main.js` contains the charts. On desktop, each project section pins while its chart grows.
   With reduced motion, every chart renders fully.
+- Orchestrate's merge history (`MERGES`) is rebuilt every morning on the server by
+  `tools/update-merges-data.mjs` (see Deploy). To refresh it locally, run
+  `node tools/update-merges-data.mjs data.js`; it keeps a clone of Orchestrate in `.cache/`.
 
 ## Deploy
 
@@ -46,14 +49,49 @@ The site lives at [theriault.dev](https://theriault.dev), served by
 [Who Touched My Server](https://github.com/devontheriault/theriault.dev), my C server, which also
 watches it. The server serves this repo from its `SITE_ROOT` directory (default `site/` beside the
 server) and keeps its own dashboard at `/monitor/`. The server has this repo cloned as `site/`
-(it refuses to serve dotfiles, so `.git` stays private). To deploy, push to GitHub, then on the
-server:
+(it refuses to serve dotfiles, so `.git` and `.cache` stay private). To deploy, push to GitHub,
+then on the server:
 
 ```sh
-cd <theriault.dev checkout>/site && git pull
+SERVER_SERVICE=<server's systemd unit> <theriault.dev checkout>/site/tools/deploy.sh
 ```
 
-Files are revalidated on every request, so changes show up without a restart.
+`deploy.sh` pulls, rebuilds Orchestrate's merge history in `data.js` and restarts the server. The
+server's `data.js` always carries that day's rebuild, so the script drops it before pulling. It
+needs `git`, `node` and permission to `sudo systemctl restart` the server's unit without a
+password.
+
+A systemd timer runs it every morning. In `/etc/systemd/system/site-deploy.service`:
+
+```ini
+[Unit]
+Description=Deploy theriault.dev's site and refresh its data
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=<user that owns the checkout>
+Environment=SERVER_SERVICE=<server's systemd unit>
+ExecStart=<theriault.dev checkout>/site/tools/deploy.sh
+```
+
+and `/etc/systemd/system/site-deploy.timer`:
+
+```ini
+[Unit]
+Description=Deploy theriault.dev's site every morning
+
+[Timer]
+OnCalendar=*-*-* 07:00 America/Halifax
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+then `sudo systemctl daemon-reload && sudo systemctl enable --now site-deploy.timer`. Check the
+last run with `journalctl -u site-deploy`.
 
 Every page loads `/monitor/js/track.js`, which reports the visit. When you run the site locally
 with `python3 -m http.server`, that script doesn't exist and the request fails harmlessly.

@@ -1,4 +1,4 @@
-import { LAND, LAND_STEP, MERGES, AGREEMENTS, VISITOR_CITIES, VISITOR_STATS, BOOKS } from './data.js';
+import { LAND, LAND_STEP, MERGES, ORCH_COMMITS, AGREEMENTS, VISITOR_CITIES, VISITOR_STATS, BOOKS } from './data.js';
 
 // ---------- helpers ----------
 const NS = 'http://www.w3.org/2000/svg';
@@ -162,7 +162,9 @@ function orchestrateChart() {
     return lo;
   };
   const countEl = readout('orch-count'), labelEl = readout('orch-label');
-  let arcs = [], drawn = [], arcGroup, head, mainLine, geo, hot = -1, shown = 0;
+  // commits on main, as GitHub counts them, once each merge has landed; the full total at the end
+  const commitsBy = [0, ...MERGES.slice(0, -1).map((m) => m[5]), ORCH_COMMITS];
+  let arcs = [], drawn = [], marks = [], arcGroup, head, mainLine, geo, hot = -1, shown = 0;
 
   return {
     build(svg, W, H) {
@@ -202,14 +204,28 @@ function orchestrateChart() {
       }
 
       arcGroup = svgEl('g', { class: 'arcs' }, svg);
-      arcs = MERGES.map(([fork, merge, lines], i) => {
+      marks = [];
+      arcs = MERGES.map(([fork, merge, lines, , commits], i) => {
         const xe = x0 + (i + 0.5) * step;
         const xs = Math.min(x0 + forkIndex(fork) * step, xe - 3);
         const c = base - height(lines) * (4 / 3);
-        return svgEl('path', {
+        const arc = svgEl('path', {
           d: `M${xs.toFixed(1)},${base} C${xs.toFixed(1)},${c.toFixed(1)} ${xe.toFixed(1)},${c.toFixed(1)} ${xe.toFixed(1)},${base}`,
           class: 'arc', pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1,
         }, arcGroup);
+        // each commit sits on the arc where its time falls between fork and merge
+        for (const [t, added] of commits) {
+          const f = clamp((t - fork) / Math.max(1, merge - fork));
+          let lo = 0, hi = 1; // the curve's x runs 3u² - 2u³ of the way across
+          for (let k = 0; k < 20; k++) { const u = (lo + hi) / 2; if (3 * u * u - 2 * u * u * u < f) lo = u; else hi = u; }
+          const u = (lo + hi) / 2;
+          const r = 1.5 + Math.log10(Math.max(1, added)) * 0.75;
+          marks.push({ i, u, el: svgEl('circle', {
+            cx: (xs + (xe - xs) * (3 * u * u - 2 * u * u * u)).toFixed(1),
+            cy: (base + (c - base) * 3 * u * (1 - u)).toFixed(1), r: r.toFixed(1), class: 'commit',
+          }, arcGroup) });
+        }
+        return arc;
       });
       drawn = arcs.map(() => -1);
 
@@ -223,15 +239,16 @@ function orchestrateChart() {
         const q = Math.round(clamp(g - i) * 100) / 100;
         if (q !== drawn[i]) { arc.setAttribute('stroke-dashoffset', 1 - q); drawn[i] = q; }
       });
+      for (const m of marks) m.el.classList.toggle('is-on', drawn[m.i] >= m.u);
       const x = geo.x0 + clamp(g / N) * (geo.x1 - geo.x0);
       mainLine.setAttribute('x2', x);
       head.setAttribute('cx', x);
       head.style.opacity = p > 0 ? 1 : 0;
       shown = Math.min(N, Math.floor(g + 0.001));
-      countEl.textContent = num.format(shown);
+      countEl.textContent = num.format(commitsBy[shown]);
       labelEl.textContent = shown
-        ? `agent merges into main, through ${fmtDay.format(new Date(MERGES[shown - 1][1] * 1000))}`
-        : 'agent merges into main';
+        ? `commits on main, through ${fmtDay.format(new Date(MERGES[shown - 1][1] * 1000))}`
+        : 'commits on main';
       if (hot >= shown) this.hover(null);
     },
     hover(x, y, client) {
@@ -246,15 +263,16 @@ function orchestrateChart() {
     },
     highlight(i, client) {
       if (hot >= 0) arcs[hot]?.classList.remove('is-hot');
+      for (const m of marks) m.el.classList.toggle('is-hot', m.i === i);
       hot = i;
       arcGroup.classList.toggle('has-hot', i >= 0);
       if (i < 0) return;
       arcs[i].classList.add('is-hot');
-      const [fork, merge, lines, id] = MERGES[i];
+      const [fork, merge, lines, id, commits] = MERGES[i];
       showTip(client ?? anchorOf(arcs[i]), `+${num.format(lines)} lines`, [
         `agent-${id}`,
         `Merged ${fmtDayTime.format(new Date(merge * 1000))}`,
-        `Branch open ${duration(merge - fork)}`,
+        `Branch open ${duration(merge - fork)} · ${commits.length} commit${commits.length === 1 ? '' : 's'}`,
       ]);
     },
   };
@@ -773,6 +791,17 @@ frame();
     startX = null;
     if (Math.abs(dx) > 40) show(at + (dx < 0 ? 1 : -1));
   });
+}
+
+// ---------- the Orchestrate chart's description, kept in step with the merge data ----------
+{
+  const days = new Set(MERGES.map((m) => fmtIsoDay.format(new Date(m[1] * 1000))));
+  const busiest = [...days].map((d) => [d, MERGES.filter((m) => fmtIsoDay.format(new Date(m[1] * 1000)) === d)])
+    .reduce((a, b) => (b[1].length > a[1].length ? b : a));
+  const day = (unix) => fmtDay.format(new Date(unix * 1000));
+  const commits = MERGES.reduce((n, m) => n + m[4].length, 0);
+  orchStory.querySelector('.viz__plot').setAttribute('aria-label',
+    `Arc chart of ${MERGES.length} agent-branch merges into Orchestrate's main branch between ${day(MERGES[0][1])} and ${day(MERGES.at(-1)[1])}, with ${num.format(commits)} branch commits marked as dots along the arcs. Arc height shows lines added, on a log scale. Most merges happened on ${day(busiest[1][0][1])}.`);
 }
 
 // ---------- reading figures in the copy, kept in step with the book data ----------
