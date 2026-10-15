@@ -33,10 +33,8 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ## Charts
 
 - `data.js` holds the generated data: Orchestrate's merge history, the agreements from
-  variablegeometry.ca, a land dot grid for the map (Natural Earth 110m), a fallback snapshot of
-  theriault.dev's visitor data and this year's books from `~/Projects/Books/js/books.js`. In the
-  browser, the map and visitor stats are fetched live from theriault.dev's `/globe` and `/stats`
-  endpoints, which allow cross-origin requests.
+  variablegeometry.ca and this year's books from `~/Projects/Books/js/books.js`. Foresite's
+  diagram is drawn from a fixed example pageview in `main.js`.
 - `main.js` contains the charts. On desktop, each project section pins while its chart grows.
   With reduced motion, every chart renders fully.
 - Orchestrate's merge history (`MERGES`) is rebuilt every morning on the server by

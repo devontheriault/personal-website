@@ -1,4 +1,4 @@
-import { LAND, LAND_STEP, MERGES, ORCH_COMMITS, AGREEMENTS, VISITOR_CITIES, VISITOR_STATS, BOOKS } from './data.js';
+import { MERGES, ORCH_COMMITS, AGREEMENTS, BOOKS } from './data.js';
 
 // ---------- helpers ----------
 const NS = 'http://www.w3.org/2000/svg';
@@ -161,7 +161,158 @@ function plotProgress(plot) {
 const readout = (k) => document.querySelector(`[data-readout="${k}"]`);
 
 // =====================================================================
-// 01 Orchestrate: every agent-branch merge as an arc off main
+// 01 Foresite: one pageview, from what the browser sends to what's stored
+// =====================================================================
+// What the browser sends (left) and what Foresite keeps (right). Each kept field lists
+// the sent fields, and the daily salt, it's made from.
+const FS_SENT = [
+  { key: 'ip', label: 'IP address', value: '203.0.113.42', personal: true,
+    tip: ['Looks up the country and goes into the visitor hash.', 'Then dropped: never stored.'] },
+  { key: 'ua', label: 'User-Agent', value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Safari/604.1', personal: true,
+    tip: ['Gives the browser, OS and device and goes into the visitor hash.', 'Then dropped: never stored.'] },
+  { key: 'page', label: 'Page', value: 'https://northwind.example/pricing',
+    tip: ['Kept as the path, with any email addresses or other personal data scrubbed out.'] },
+  { key: 'ref', label: 'Referrer', value: 'https://news.ycombinator.com/', tip: ['Kept as the source the visit came from.'] },
+  { key: 'time', label: 'Time', value: '2:14 PM', tip: ['Kept as the time the event arrived.'] },
+];
+const FS_SALT = { key: 'salt', label: 'Daily salt', tip: ['A random secret for the site\'s day, mixed into every visitor hash.', 'Deleted when the day ends, so the hash can\'t be recomputed.'] };
+const FS_KEPT = [
+  { label: 'Visitor hash', value: '7c3e9a41f0b25d18', from: ['ip', 'ua', 'salt'],
+    tip: ['One-way, for one site and one day.', 'Tells unique visitors apart without a cookie.'] },
+  { label: 'Country', value: 'Nova Scotia, Canada', from: ['ip'], tip: ['Country and region only.'] },
+  { label: 'Browser', value: 'Safari · iOS · Mobile', from: ['ua'], tip: ['Browser, OS and device type only.'] },
+  { label: 'Page', value: '/pricing', from: ['page'], tip: ['The path, scrubbed of personal data.'] },
+  { label: 'Source', value: 'Hacker News', from: ['ref'], tip: ['The referring site, by name.'] },
+  { label: 'Time', value: '2:14 PM', from: ['time'], tip: ['When the event arrived.'] },
+];
+
+function foresiteChart() {
+  // every hoverable thing, in reading order: sent fields, the salt, kept fields
+  let items = [], links = [], linkGroup, saltLink, hot = null;
+
+  // trim a value with an ellipsis until it fits
+  const fit = (t, max) => {
+    const full = t.textContent;
+    for (let n = full.length; n > 4 && t.getComputedTextLength() > max; n--) t.textContent = full.slice(0, n - 1) + '…';
+  };
+  const chip = (parent, x, y, w, h, d, cls) => {
+    const g = svgEl('g', { class: `fs-item ${cls}` }, parent);
+    svgEl('rect', { x, y: y - h / 2, width: w, height: h, rx: 6, class: 'fs-chip' }, g);
+    label(g, x + 10, y - 3, d.label, 'ax-text fs-label');
+    fit(label(g, x + 10, y + 12, d.value, 'fs-value'), w - 20);
+    return g;
+  };
+
+  return {
+    build(svg, W, H) {
+      const inset = wrapInset(W), x0 = inset, x1 = W - inset;
+      const colW = clamp((x1 - x0) * 0.34, 130, 300);
+      const top = 50, span = H - top - 4;
+      const chipH = clamp(span / FS_KEPT.length - 10, 30, 40);
+      const lx = x0 + colW, rx = x1 - colW, xm = (lx + rx) / 2;
+
+      label(svg, x0, 14, 'Browser sends', 'ax-text ax-text--strong');
+      label(svg, rx, 14, 'Foresite stores', 'ax-text ax-text--strong');
+
+      linkGroup = svgEl('g', { class: 'fs-links' }, svg);
+      const chips = svgEl('g', {}, svg);
+      const ends = {};
+      items = [];
+      FS_SENT.forEach((d, i) => {
+        const y = top + (i + 0.5) * (span / FS_SENT.length);
+        const g = chip(chips, x0, y, colW, chipH, d, d.personal ? 'fs-item--personal' : '');
+        if (d.personal) label(g, lx - 10, y - 3, 'dropped', 'fs-drop', 'end');
+        ends[d.key] = [lx, y];
+        items.push({ d, g, box: [x0, y - chipH / 2, colW, chipH] });
+      });
+
+      // the salt sits under the headings, feeding the visitor hash from above
+      const sy = 34, saltG = svgEl('g', { class: 'fs-item fs-salt-g' }, chips);
+      svgEl('circle', { cx: xm, cy: sy, r: 5, class: 'fs-salt' }, saltG);
+      const saltText = label(saltG, xm - 10, sy + 4, FS_SALT.label, 'ax-text fs-label', 'end');
+      ends.salt = [xm, sy];
+      items.push({ d: FS_SALT, g: saltG, salt: true, saltText, box: [xm - 140, sy - 10, 150, 20] });
+
+      links = [];
+      FS_KEPT.forEach((d, j) => {
+        const y = top + (j + 0.5) * (span / FS_KEPT.length);
+        const item = { d, g: chip(chips, rx, y, colW, chipH, d, 'fs-item--kept'), box: [rx, y - chipH / 2, colW, chipH], links: [] };
+        for (const f of d.from) {
+          const [sx, sy2] = ends[f];
+          const path = f === 'salt'
+            ? `M${sx},${sy2 + 5} C${sx},${y} ${(sx + rx) / 2},${y} ${rx},${y}`
+            : `M${sx},${sy2} C${xm},${sy2} ${xm},${y} ${rx},${y}`;
+          const el = svgEl('path', {
+            d: path, pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1,
+            class: `fs-link${f === 'salt' ? ' fs-link--salt' : FS_SENT.find((s) => s.key === f).personal ? ' fs-link--personal' : ''}`,
+          }, linkGroup);
+          const link = { el, j, from: f, drawn: -1 };
+          if (f === 'salt') saltLink = link;
+          links.push(link);
+          item.links.push(link);
+        }
+        items.push(item);
+      });
+      for (const it of items) it.links ??= links.filter((l) => l.from === it.d.key);
+      hot = null;
+    },
+    update(p) {
+      // fields arrive, links draw kept field by kept field, then the personal fields are
+      // dropped and, last, the day's salt is deleted
+      items.forEach((it, i) => {
+        if (it.d.from) return;
+        const at = it.salt ? 0.22 : 0.02 + i * 0.04;
+        it.on = p > at;
+        it.g.classList.toggle('is-on', it.on);
+      });
+      for (const l of links) {
+        const q = Math.round(clamp((p - 0.25 - l.j * 0.07) / 0.12) * 100) / 100;
+        if (q !== l.drawn) { l.el.setAttribute('stroke-dashoffset', 1 - q); l.drawn = q; }
+      }
+      for (const it of items) {
+        if (!it.d.from) continue;
+        it.on = it.links.every((l) => l.drawn >= 0.9);
+        it.g.classList.toggle('is-on', it.on);
+      }
+      const dropped = p > 0.8, gone = p > 0.92;
+      for (const it of items) if (it.d.personal) it.g.classList.toggle('is-dropped', dropped);
+      const salt = items.find((it) => it.salt);
+      salt.g.classList.toggle('is-gone', gone);
+      salt.saltText.textContent = gone ? 'Salt deleted at day\'s end' : FS_SALT.label;
+      saltLink.el.classList.toggle('is-gone', gone);
+      if (hot != null && !items[hot].on) this.hover(null);
+    },
+    hover(x, y, client) {
+      if (x == null) { this.highlight(null); return; }
+      const i = items.findIndex((it) => {
+        const [bx, by, bw, bh] = it.box;
+        return it.on && x >= bx - 6 && x <= bx + bw + 6 && y >= by - 6 && y <= by + bh + 6;
+      });
+      if (i < 0) { this.highlight(null); hideTip(); return; }
+      this.highlight(i, client);
+    },
+    step(dir) {
+      const shown = items.map((it, i) => (it.on ? i : -1)).filter((i) => i >= 0);
+      if (!shown.length) return;
+      const at = shown.indexOf(hot);
+      this.highlight(shown[at < 0 ? (dir > 0 ? 0 : shown.length - 1) : clamp(at + dir, 0, shown.length - 1)]);
+    },
+    highlight(i, client) {
+      if (hot != null) items[hot].g.classList.remove('is-hot');
+      for (const l of links) l.el.classList.remove('is-hot');
+      hot = i;
+      linkGroup.classList.toggle('has-hot', i != null);
+      if (i == null) return;
+      const it = items[i];
+      it.g.classList.add('is-hot');
+      for (const l of it.links) l.el.classList.add('is-hot');
+      showTip(client ?? anchorOf(it.g), it.d.label, it.d.tip);
+    },
+  };
+}
+
+// =====================================================================
+// 02 Orchestrate: every agent-branch merge as an arc off main
 // =====================================================================
 function orchestrateChart() {
   const N = MERGES.length;
@@ -290,7 +441,7 @@ function orchestrateChart() {
 }
 
 // =====================================================================
-// 02 Tracking Canada's Agreements: one dot per agreement, by month
+// 03 Tracking Canada's Agreements: one dot per agreement, by month
 // =====================================================================
 const TYPES = ['Security', 'Economic', 'Strategic Partnership', 'Technology', 'Resources'];
 const typeColor = (t) => `var(--s${TYPES.indexOf(t) + 1})`;
@@ -392,139 +543,6 @@ function agreementsChart() {
         fmtDate.format(new Date(date + 'T00:00:00Z')),
         countries,
       ]);
-    },
-  };
-}
-
-// =====================================================================
-// 03 Who Touched My Server: visitor cities, routed back to Halifax
-// =====================================================================
-const HALIFAX = [-63.57, 44.65];
-// Equal Earth projection (Šavrič, Patterson & Jenny, 2018)
-function equalEarth(lon, lat) {
-  const A1 = 1.340264, A2 = -0.081106, A3 = 0.000893, A4 = 0.003796, M = Math.sqrt(3) / 2;
-  const lam = (lon * Math.PI) / 180, phi = (lat * Math.PI) / 180;
-  const l = Math.asin(M * Math.sin(phi)), l2 = l * l, l6 = l2 * l2 * l2;
-  return [
-    (lam * Math.cos(l)) / (M * (A1 + 3 * A2 * l2 + l6 * (7 * A3 + 9 * A4 * l2))),
-    l * (A1 + A2 * l2 + l6 * (A3 + A4 * l2)),
-  ];
-}
-
-function visitorsChart() {
-  let cities = [], routes = [], bubbles = [], labels = [], drawn = [], on = [], hot = null, shown = 0, N = 0;
-
-  const setData = (rows) => {
-    cities = rows
-      .map(([city, country, count, lat, lng]) => ({ city, country, count, lat, lng }))
-      .sort((a, b) => b.count - a.count);
-    N = cities.length;
-  };
-  setData(VISITOR_CITIES);
-
-  return {
-    setData,
-    build(svg, W, H) {
-      const pad = 6;
-      const xMax = equalEarth(180, 0)[0], yTop = equalEarth(0, 80)[1], yBot = equalEarth(0, -56)[1];
-      const k = Math.min((W - 2 * pad) / (2 * xMax), (H - 2 * pad) / (yTop - yBot));
-      const oy = pad + (H - 2 * pad - k * (yTop - yBot)) / 2 + k * yTop;
-      const project = (lon, lat) => { const [x, y] = equalEarth(lon, lat); return [W / 2 + k * x, oy - k * y]; };
-
-      // land as a dot grid: one path, round caps on zero-length segments
-      const spacing = project(LAND_STEP, 0)[0] - project(0, 0)[0];
-      let d = '';
-      for (const [lat, idxs] of LAND) {
-        for (const i of idxs) {
-          const [x, y] = project(-180 + (i + 0.5) * LAND_STEP, lat);
-          d += `M${x.toFixed(1)} ${y.toFixed(1)}h0`;
-        }
-      }
-      svgEl('path', { d, class: 'land', 'stroke-width': Math.max(1.4, spacing * 0.48).toFixed(2) }, svg);
-
-      const hub = project(...HALIFAX);
-      const routeGroup = svgEl('g', {}, svg);
-      const cityGroup = svgEl('g', {}, svg);
-      const labelGroup = svgEl('g', {}, svg);
-      const max = cities[0]?.count || 1;
-      const rMax = clamp(W / 55, 7, 22);
-
-      routes = []; bubbles = []; labels = [];
-      cities.forEach((c, i) => {
-        const [x, y] = project(c.lng, c.lat);
-        const dx = hub[0] - x, dy = hub[1] - y, dist = Math.hypot(dx, dy);
-        if (dist > 4) {
-          // bow each route upward, more for longer hops
-          let nx = -dy / dist, ny = dx / dist;
-          if (ny > 0) { nx = -nx; ny = -ny; }
-          const cx = (x + hub[0]) / 2 + nx * dist * 0.28, cy = (y + hub[1]) / 2 + ny * dist * 0.28;
-          routes[i] = svgEl('path', {
-            d: `M${x.toFixed(1)},${y.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${hub[0].toFixed(1)},${hub[1].toFixed(1)}`,
-            class: 'route', pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1,
-          }, routeGroup);
-        }
-        c.x = x; c.y = y; c.r = Math.max(2.5, Math.sqrt(c.count / max) * rMax);
-      });
-      // biggest first, so small circles sit on top
-      cities.forEach((c, i) => { bubbles[i] = svgEl('circle', { cx: c.x, cy: c.y, r: c.r, class: 'city' }, cityGroup); });
-
-      svgEl('circle', { cx: hub[0], cy: hub[1], r: 5, class: 'hub-pulse' }, svg);
-      svgEl('circle', { cx: hub[0], cy: hub[1], r: 5, class: 'hub' }, svg);
-      const home = cities.find((c) => c.city === 'Halifax');
-      const hubLabel = label(svg, hub[0], hub[1] + (home ? home.r : 5) + 14, 'Halifax', 'ax-text ax-text--strong', 'middle');
-
-      // selective direct labels: the busiest cities other than home, skipping any that would collide
-      const boxes = [hubLabel.getBBox()];
-      const overlaps = (a, b) => a.x < b.x + b.width + 4 && b.x < a.x + a.width + 4 && a.y < b.y + b.height && b.y < a.y + a.height;
-      for (const c of cities.filter((c) => c.city !== 'Halifax').slice(0, 5)) {
-        const t = label(labelGroup, c.x, c.y - c.r - 6, c.city, 'ax-text ax-text--strong', 'middle');
-        const box = t.getBBox();
-        if (boxes.some((b) => overlaps(b, box))) { t.remove(); continue; }
-        boxes.push(box);
-        t.style.transition = 'opacity .3s';
-        labels.push({ t, i: cities.indexOf(c) });
-        if (labels.length === 3) break;
-      }
-
-      drawn = cities.map(() => -1);
-      on = cities.map(() => false);
-      hot = null;
-    },
-    update(p) {
-      const g = p * (N + 1);
-      shown = 0;
-      cities.forEach((c, i) => {
-        const q = Math.round(clamp((g - i) * 1.5) * 100) / 100;
-        if (routes[i] && q !== drawn[i]) { routes[i].setAttribute('stroke-dashoffset', 1 - q); drawn[i] = q; }
-        const v = q > 0.05;
-        if (v !== on[i]) { bubbles[i].classList.toggle('is-on', v); on[i] = v; }
-        if (v) shown = i + 1;
-      });
-      for (const { t, i } of labels) t.style.opacity = on[i] ? 1 : 0;
-      if (hot != null && !on[hot]) this.hover(null);
-    },
-    hover(x, y, client) {
-      if (x == null) { this.highlight(null); return; }
-      let best = null, bestD = Infinity;
-      cities.forEach((c, i) => {
-        if (!on[i]) return;
-        const d = Math.hypot(c.x - x, c.y - y) - c.r;
-        if (d < bestD) { bestD = d; best = i; }
-      });
-      if (best == null || bestD > 14) { this.highlight(null); hideTip(); return; }
-      this.highlight(best, client);
-    },
-    step(dir) {
-      if (!shown) return;
-      this.highlight(hot == null ? (dir > 0 ? 0 : shown - 1) : clamp(hot + dir, 0, shown - 1));
-    },
-    highlight(i, client) {
-      if (hot != null) bubbles[hot]?.classList.remove('is-hot');
-      hot = i;
-      if (i == null) return;
-      bubbles[i].classList.add('is-hot');
-      const c = cities[i];
-      showTip(client ?? anchorOf(bubbles[i]), `${num.format(c.count)} visits`, [`${c.city}, ${c.country}`]);
     },
   };
 }
@@ -745,16 +763,15 @@ function booksChart() {
 }
 
 // ---------- wire it up ----------
+const fsStory = document.querySelector('[data-story="fs"]');
 const orchStory = document.querySelector('[data-story="orch"]');
 const vgStory = document.querySelector('[data-story="vg"]');
-const tdStory = document.querySelector('[data-story="td"]');
 const booksStory = document.querySelector('[data-story="books"]');
 const careerPlot = document.querySelector('[data-chart="career"]');
 
+mountChart(fsStory.querySelector('.viz__plot'), foresiteChart(), storyProgress(fsStory));
 mountChart(orchStory.querySelector('.viz__plot'), orchestrateChart(), storyProgress(orchStory));
 mountChart(vgStory.querySelector('.viz__plot'), agreementsChart(), storyProgress(vgStory));
-const visitors = visitorsChart();
-const visitorsMounted = mountChart(tdStory.querySelector('.viz__plot'), visitors, storyProgress(tdStory));
 mountChart(booksStory.querySelector('.viz__plot'), booksChart(), storyProgress(booksStory));
 mountChart(careerPlot, careerChart(), plotProgress(careerPlot));
 
@@ -823,34 +840,3 @@ frame();
   booksStory.querySelector('.viz__plot').setAttribute('aria-label',
     `Bookshelf chart of the ${BOOKS.length} books I have read in 2026, ${num.format(pages)} pages in all. Spine width shows pages and spine height shows my rating out of five.`);
 }
-
-// ---------- live data from theriault.dev ----------
-function setStats(stats) {
-  for (const el of document.querySelectorAll('[data-stat]')) {
-    const v = stats[el.dataset.stat];
-    if (typeof v === 'number') el.textContent = num.format(v);
-  }
-}
-setStats(VISITOR_STATS);
-(async () => {
-  const source = document.querySelector('[data-td-source]');
-  try {
-    const get = async (path) => {
-      const res = await fetch(`https://theriault.dev${path}`, { signal: AbortSignal.timeout(5000) });
-      if (!res.ok) throw new Error(res.status);
-      return res.json();
-    };
-    const [globe, stats] = await Promise.all([get('/globe'), get('/stats')]);
-    const rows = globe.cities
-      .filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lng) && c.count > 0)
-      .map((c) => [String(c.city), String(c.country), c.count, c.lat, c.lng]);
-    if (!rows.length) throw new Error('empty');
-    visitors.setData(rows);
-    visitorsMounted.rebuild();
-    setStats(stats);
-    source.textContent = 'Source: theriault.dev, fetched live just now.';
-  } catch {
-    // keep the bundled snapshot; the caption already says so
-  }
-})();
-

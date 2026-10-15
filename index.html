@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Devon Theriault: Data analyst who builds things</title>
-  <meta name="description" content="Devon Theriault: senior data analyst in Halifax, Nova Scotia, and builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
+  <meta name="description" content="Devon Theriault: senior data analyst in Halifax, Nova Scotia, and builder of Foresite, Orchestrate and Tracking Canada's Agreements.">
   <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
   <meta property="og:title" content="Devon Theriault">
-  <meta property="og:description" content="Senior data analyst in Halifax, NS. Builder of Orchestrate, Tracking Canada's Agreements and Who Touched My Server.">
+  <meta property="og:description" content="Senior data analyst in Halifax, NS. Builder of Foresite, Orchestrate and Tracking Canada's Agreements.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://theriault.dev/">
   <link rel="canonical" href="https://theriault.dev/">
@@ -58,7 +58,42 @@
         <h2 id="projects-title">Four things I've built. Keep scrolling to see the data behind each one.</h2>
       </div>
 
-      <!-- 01 Orchestrate -->
+      <!-- 01 Foresite -->
+      <article class="story" data-story="fs" aria-labelledby="fs-title">
+        <div class="story__pin">
+          <div class="wrap story__text">
+            <div>
+              <h3 id="fs-title">Foresite</h3>
+              <p class="project__kind">Product · Go, Postgres, React, TypeScript</p>
+              <p class="project__desc">
+                A privacy-first web analytics product I built and run. Sites add one line of JavaScript and
+                get traffic stats with no cookies, no stored IP addresses and no consent banner. One Go binary
+                handles collection, the dashboard and billing on Postgres.
+              </p>
+              <div class="project__links">
+                <a href="https://foresite.dev" target="_blank" rel="noopener">foresite.dev <span aria-hidden="true">↗</span></a>
+                <a href="https://app.foresite.dev/demo" target="_blank" rel="noopener">Live demo <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="readout">
+              <span class="readout__big">0</span>
+              <span class="readout__label">cookies or IP addresses stored</span>
+            </div>
+          </div>
+          <figure class="viz">
+            <div class="viz__plot" data-chart="fs" tabindex="0" role="img"
+                 aria-label="Diagram of one pageview passing through Foresite. The browser sends an IP address, a User-Agent, the page, the referrer and the time. Foresite turns the IP address and User-Agent into a country, a browser and device, and a one-day visitor hash made with a daily salt, then drops them. It stores only the hash, country, browser, page, source and time, and deletes the salt when the day ends."></div>
+            <figcaption class="wrap viz__caption">
+              What happens to one pageview. The IP address and User-Agent are used once, to find the country, the browser
+              and a visitor hash that only lasts a day, then dropped before anything is saved. Each day's salt is deleted
+              when the day ends, so a hash can't be linked to any other day.
+              Source: Foresite's collector code.
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- 02 Orchestrate -->
       <article class="story" data-story="orch" aria-labelledby="orch-title">
         <div class="story__pin">
           <div class="wrap story__text">
@@ -92,7 +127,7 @@
         </div>
       </article>
 
-      <!-- 02 Tracking Canada's Agreements -->
+      <!-- 03 Tracking Canada's Agreements -->
       <article class="story" data-story="vg" aria-labelledby="vg-title">
         <div class="story__pin">
           <div class="wrap story__text">
@@ -120,39 +155,6 @@
             <figcaption class="wrap viz__caption">
               Each dot is one agreement, stacked by the month it was signed or announced and coloured by deal type.
               Source: variablegeometry.ca.
-            </figcaption>
-          </figure>
-        </div>
-      </article>
-
-      <!-- 03 Who Touched My Server -->
-      <article class="story" data-story="td" aria-labelledby="td-title">
-        <div class="story__pin">
-          <div class="wrap story__text">
-            <div>
-              <h3 id="td-title">Who Touched My Server</h3>
-              <p class="project__kind">Personal project · C, SQLite, vanilla JavaScript</p>
-              <p class="project__desc">
-                A real-time visitor analytics dashboard I built from scratch: a custom HTTP server written in C,
-                with SQLite storage and a vanilla JavaScript frontend. No frameworks and no managed
-                infrastructure. It now watches this site, and the map below is its own data, fetched live.
-              </p>
-              <div class="project__links">
-                <a href="/monitor/" target="_blank" rel="noopener">theriault.dev/monitor <span aria-hidden="true">↗</span></a>
-              </div>
-            </div>
-            <dl class="mini-kpis">
-              <div><dt>Visits</dt><dd data-stat="total_visits">–</dd></div>
-              <div><dt>Unique visitors</dt><dd data-stat="unique_visitors">–</dd></div>
-              <div><dt>Countries</dt><dd data-stat="unique_countries">–</dd></div>
-            </dl>
-          </div>
-          <figure class="viz">
-            <div class="viz__plot" data-chart="td" tabindex="0" role="img"
-                 aria-label="World map of the cities that have visited theriault.dev, each connected back to Halifax. Circle size shows visits."></div>
-            <figcaption class="wrap viz__caption">
-              Every city that has visited theriault.dev, connected back to Halifax. Circle area shows visits.
-              <span data-td-source>Source: theriault.dev, snapshot from October 2, 2026.</span>
             </figcaption>
           </figure>
         </div>
